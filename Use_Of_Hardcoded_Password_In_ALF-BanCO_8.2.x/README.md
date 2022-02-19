@@ -17,3 +17,5 @@ At the request of the vendor, the password has been partially obscured.
 * * *
 
 After installing the application and configuring our user, the file “**HbDat001.alfdb8**” is created inside the following path: “**C:\\Users\\&lt;username&gt;\\AppData\\Roaming\\ALFBanCo8\\Daten**”.
+
+![db_path](https://raw.githubusercontent.com/ph0nkybit/proof-of-concepts/main/Use_Of_Hardcoded_Password_In_ALF-BanCO_8.2.x/images/db_path.png)
