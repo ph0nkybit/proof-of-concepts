@@ -56,7 +56,7 @@ Returning to the “**OpenSQLite**” function, we also note that the “**Syste
 
 ![System.Data.SQLite](https://raw.githubusercontent.com/ph0nkybit/proof-of-concepts/main/Use_Of_Hardcoded_Password_In_ALF-BanCO_8.2.x/images/System.Data.SQLite.png)
 
-The following Python2 script can be used to decrypt the database.
+The following Python script can be used to decrypt the database.
 
 Copying “**HbDat001.alfdb8**” to a new directory and running the script, creates “**HbDat001.sqlite**” in the same directory (thanks to https://gist.github.com/zuccaro for the original Python code).
 
@@ -110,7 +110,7 @@ The username and password hash used by the user to login into the application.
 
 In addition to being able to read user data, an attacker could also copy the “**HbDat001.alfdb8**” file on his machine, decrypt it, change the password hash on the database with one of his choise, re-encrypt the database, download the application and choose to restore from a backup during the initial setup, to access the victim’s data from the application without knowing the user's password.
 
-The following Python2 script can be used to re-encrypt the database.
+The following Python script can be used to re-encrypt the database.
 
 ```
 def encryptSystemDataSQLite(file, password):
