@@ -74,7 +74,6 @@ def decryptSystemDataSQLite(file, password):
         key = SHA.new(password).digest()[:16] 
         header = ARC4.new(key).decrypt(f.read(1024)) 
         if header[0:15] == 'SQLite format 3': 
-            print("Valid!")
             declared_ps = unpack('>H',header[16:18])[0] 
             if declared_ps == 1: 
                 declared_ps = 65536 
